@@ -7,26 +7,29 @@ const genl_routes = require('./router/general.js').general;
 const app = express();
 
 app.use(express.json());
-
 app.use("/customer",session({secret:"fingerprint_customer",resave: true, saveUninitialized: true}))
 
-app.use("/customer/auth/*", function auth(req,res,next){
-//Write the authenication mechanism here
-if(req.session.authorization){
-let token = req.session.authorization['accessToken'];
-jwt.verify(token , "access",(err , user)=> {
-if(!err){
-    req.user = user ; 
-    next();
-}
-else {return res.status(403).json({ message: "User not authenticated" }); // Return error if token verification fails
-}
-});
-}
-else {return res.status(403).json({ message: "User not logged in" });}
- 
 
-});
+app.use("/customer/auth/*"  , (req , res , next) => {
+
+    // check if user authenticated 
+    if(req.session.authorization){
+        let token = req.session.authorization['accessToken'];
+        jwt.verify(token , "access" , (err , user ) => {
+            if(!err) {
+                req.user = user ; 
+                next();
+            }
+
+            else {
+                return res.status(403).json({message : "User not auth"}) 
+
+            }
+        })
+    }
+    else {res.send("no access token found in session , user not loged in :")}
+} )
+
 
 const PORT =5000;
 
