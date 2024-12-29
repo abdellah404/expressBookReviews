@@ -80,7 +80,7 @@ regd_users.delete("/auth/review/:isbn" , (req ,res) => {
   console.log(book.reviews[username])
   delete book.reviews[username];
 
-res.send("your book review deleted " + username) ;
+res.send("your book review deleted " + req.user.password) ;
 
 
 })

@@ -54,6 +54,27 @@ async function getBookByTitle(title) {
   }
 }
 
+// get book deatail by isbn with promise fetch
+
+function getBookByISBNP(title) {
+  fetch(`http://localhost:5000/isbn/${title}`)
+  .then((response)=> {
+    if(!response.ok){
+      console.error('error fetching from url');
+    }
+    return response.json();
+  })
+  .then((data)=> {
+    console.log(data.title);
+  })
+  .catch((error)=>{
+    console.error('error : ', error)
+  })
+
+}
+
+
+
 // Get the book list available in the shop
 public_users.get("/", async function (req, res) {
   try {
@@ -96,12 +117,13 @@ public_users.get("/title/:title", (req, res) => {
 });
 
 //  Get book review
-public_users.get("/review/:title", function (req, res) {
-  const title = req.params.title;
-  const fetched_title = Object.values(books).find(
-    (book) => book.title === title
-  );
-  return res.send(fetched_title.reviews);
+public_users.get("/review/:isbn", function (req, res) {
+  const isbn = req.params.isbn;
+  return res.send(books[isbn].reviews);
 });
 
+module.exports = getBookByTitle;
+module.exports = getBookList;
+module.exports = getBooksByISBN;
+module.exports =getBookByISBNP;
 module.exports.general = public_users;
